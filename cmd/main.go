@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/chrisvinsen/go-code"
+	models "github.com/chrisvinsen/go-code"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -11,14 +11,14 @@ import (
 	"time"
 )
 
-var rawcurrency RawCurrency
+var rawcurrency models.RawCurrency
 
 func Lists(c *gin.Context) {
-	respcurrency := &ResponseMultiCurrency{
+	respcurrency := &models.ResponseMultiCurrency{
 		Success:   rawcurrency.Success,
 		Timestamp: time.Now().Unix(),
 		Base:      rawcurrency.Base,
-		Rates:     []Rate{},
+		Rates:     []models.Rate{},
 	}
 
 	v := reflect.ValueOf(rawcurrency.Rates)
@@ -49,7 +49,7 @@ func ListItem(c *gin.Context) {
 		name := typeOfS.Field(i).Name
 		rate := v.Field(i).Interface().(float64)
 		if name == requested_symbols {
-			respcurrency := ResponseSingleCurrency{
+			respcurrency := models.ResponseSingleCurrency{
 				Success:   rawcurrency.Success,
 				Timestamp: time.Now().Unix(),
 				Base:      rawcurrency.Base,
