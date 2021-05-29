@@ -2,7 +2,7 @@ package models
 
 type RawCurrency struct {
 	Success   bool   `json:"success"`
-	Timestamp int    `json:"timestamp"`
+	Timestamp int64  `json:"timestamp"`
 	Base      string `json:"base"`
 	Date      string `json:"date"`
 	Rates     struct {
@@ -19,15 +19,22 @@ type RawCurrency struct {
 	} `json:"rates"`
 }
 
-type ResponseCurrency struct {
+type ResponseMultiCurrency struct {
 	Success   bool   `json:"success"`
-	Timestamp int    `json:"timestamp"`
+	Timestamp int64  `json:"timestamp"`
 	Base      string `json:"base"`
-	Date      string `json:"date"`
 	Rates     []Rate `json:"rates"`
 }
 
 type Rate struct {
 	Name string  `json:"name"`
 	Rate float64 `json:"rate"`
+}
+
+type ResponseSingleCurrency struct {
+	Success   bool    `json:"success"`
+	Timestamp int64   `json:"timestamp"`
+	Base      string  `json:"base"`
+	Target    string  `json:"target"`
+	Rate      float64 `json:"rate"`
 }
