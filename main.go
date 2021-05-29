@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/chrisvinsen/go-code/models"
+	"github.com/chrisvinsen/go-code"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
