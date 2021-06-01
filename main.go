@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	models "github.com/chrisvinsen/go-code"
+	"github.com/chrisvinsen/go-code/models"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -12,6 +12,16 @@ import (
 )
 
 var rawcurrency models.RawCurrency
+
+func main() {
+	FetchCurrencyAPI()
+	go SchedulerFetchCurrencyAPI()
+	server := gin.Default()
+
+	server.GET("/api/currency", Lists)
+	server.GET("/api/currency/:symbols", ListItem)
+	server.Run()
+}
 
 func Lists(c *gin.Context) {
 	respcurrency := &models.ResponseMultiCurrency{
@@ -29,7 +39,7 @@ func Lists(c *gin.Context) {
 		name := typeOfS.Field(i).Name
 		rate := v.Field(i).Interface().(float64)
 		if rate != 0 {
-			respcurrency.Rates = append(respcurrency.Rates, Rate{
+			respcurrency.Rates = append(respcurrency.Rates, models.Rate{
 				Name: name,
 				Rate: rate,
 			})
@@ -64,16 +74,6 @@ func ListItem(c *gin.Context) {
 	c.JSON(http.StatusBadRequest, gin.H{"status": false, "error": "Target currency not found"})
 }
 
-func main() {
-	FetchCurrencyAPI()
-	go SchedulerFetchCurrencyAPI()
-	r := gin.Default()
-
-	r.GET("/api/currency", Lists)
-	r.GET("/api/currency/:symbols", ListItem)
-	r.Run()
-}
-
 func SchedulerFetchCurrencyAPI() {
 	for _ = range time.Tick(time.Second * 60) {
 		FetchCurrencyAPI()
@@ -85,7 +85,7 @@ func FetchCurrencyAPI() {
 	API_KEY := "b5f8c66b6ec3d2c964771b6b00fbae7c"
 	SUPPORTED_SYMBOLS := "USD,CAD,IDR,GBP,CHF,SGD,INR,MYR,JPY,KRW"
 	URL := "http://api.exchangeratesapi.io/v1/latest?access_key=" + API_KEY + "&symbols=" + SUPPORTED_SYMBOLS
-	//We make HTTP request using the Get function
+	//We make HTTP request using the Get
 	resp, err := http.Get(URL)
 	if err != nil {
 		log.Fatal("ooopsss an error occurred, please try again")
